@@ -2,3 +2,9 @@ backend/.env
 backend/.node_modules
 backend/.package-lock.json
 backend/.package.json
+Frontend/package.json
+Frontend/package-lock.json
+Frontend/eslint.config.js
+Frontend/vite.config.js
+Frontend/.env
+Frontend/.gitignore
