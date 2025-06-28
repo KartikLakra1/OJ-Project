@@ -10,25 +10,47 @@ const useSyncUser = () => {
     const syncUser = async () => {
       if (!user) return;
 
+      const token = await getToken();
+      if (!token) return console.warn("⛔ No token available");
+
+      console.log("📨 Syncing user:");
+      console.log("Email:", user.primaryEmailAddress?.emailAddress);
+      console.log("Username:", user.firstName || user.username || user.id);
+
       try {
-        const token = await getToken();
-        await axios.post("http://localhost:5000/api/auth/sync", {
-          email_addresses: user.emailAddresses,
-          username: user.username || user.id,
-        }, {
-          headers: {
-            Authorization: `Bearer ${token}`
+
+        const payload = {
+  email: user.primaryEmailAddress?.emailAddress,
+  username: user.firstName || user.username || user.id,
+};
+
+console.log("🛰️ Payload sent to backend:", payload);
+        await axios.post(
+          "http://localhost:5000/api/auth/sync",
+          payload,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
 
         console.log("✅ User synced to backend");
       } catch (err) {
-        console.error("❌ Sync failed", err);
+        if (axios.isAxiosError(err)) {
+          console.error("❌ Sync failed", {
+            status: err.response?.status,
+            message: err.message,
+            data: err.response?.data,
+          });
+        } else {
+          console.error("❌ Unknown sync error", err);
+        }
       }
     };
 
     syncUser();
-  }, [user]);
+  }, [user, getToken]);
 };
 
 export default useSyncUser;

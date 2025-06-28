@@ -2,6 +2,7 @@ import { verifyToken } from "@clerk/backend";
 
 export const protect = async (req, res, next) => {
   try {
+    console.log("herer..")
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({ error: "Missing or invalid token" });
@@ -9,12 +10,15 @@ export const protect = async (req, res, next) => {
 
     const token = authHeader.split(" ")[1];
 
+    console.log("token : " , token);
+
     // ✅ This is the actual supported function now
     const session = await verifyToken(token, {
       secretKey: process.env.CLERK_SECRET_KEY,
     });
 
     req.auth = session;
+    console.log("session: ",session)
     next();
   } catch (err) {
     console.error("❌ Clerk Auth Failed:", err.message);

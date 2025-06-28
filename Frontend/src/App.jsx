@@ -1,32 +1,20 @@
-import { useAuth, useUser } from "@clerk/clerk-react";
 import "./App.css";
 import Header from "./Components/Header/Header.jsx";
-import useApi from "./Utils/api.js";
-import { useEffect } from "react";
 import useSyncUser from "./hooks/useSyncUser.js";
+import { Routes, Route } from "react-router-dom";
+import Home from "./Pages/Home.jsx";
+import ProblemPage from "./Pages/ProblemPage.jsx";
 
 function App() {
-  const { isSignedIn } = useUser();
-
-  const api = useApi();
-
   useSyncUser();
-  useEffect(() => {
-    if (!isSignedIn) return;
-
-    api
-      .get("/problems")
-      .then((res) => {
-        console.log("Problems:", res.data);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch problems", err);
-      });
-  }, [isSignedIn]);
 
   return (
     <>
       <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/problems/:id" element={<ProblemPage />} />
+      </Routes>
     </>
   );
 }

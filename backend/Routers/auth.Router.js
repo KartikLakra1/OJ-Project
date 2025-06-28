@@ -5,37 +5,37 @@ import {protect} from "../Utils/auth.js"
 
 router.post("/sync", protect, async (req, res) => {
   try {
-    const { sub: userId } = req.auth; // 🧠 Clerk v4 token structure
-    const { email_addresses, username } = req.body;
+    const { sub: userId } = req.auth; // Clerk v4 token structure
+    const { email, username } = req.body;
 
-    if (!userId || !email_addresses || !username) {
+    console.log("📥 Incoming sync:", { userId, email, username });
+
+    if (!userId || !email || !username) {
       return res.status(400).json({
         error: "Missing data from Clerk",
         userId,
-        email_addresses,
-        username
+        email,
+        username,
       });
     }
 
     let user = await User.findOne({ clerkId: userId });
 
-    if(user){
-      return res.status(301).json({
-        message : "user already present",
-        user : user
-      })
-    }
-
-    if (!user) {
-      user = new User({
-        clerkId: userId,
-        email: email_addresses[0].email_address,
-        username,
+    if (user) {
+      return res.status(200).json({
+        message: "User already exists",
+        user,
       });
-      await user.save();
     }
 
-    res.status(200).json({ message: "User synced", user });
+    user = new User({
+      clerkId: userId,
+      email,
+      username,
+    });
+    await user.save();
+
+    res.status(200).json({ message: "✅ User synced", user });
   } catch (err) {
     console.error("❌ Sync failed:", err);
     res.status(500).json({ error: "Sync failed", details: err.message });
