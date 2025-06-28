@@ -14,7 +14,7 @@ const Header = () => {
         to="/"
         className="text-2xl font-bold text-indigo-600 hover:text-indigo-700 transition"
       >
-        ⚡ Online Judge
+        ⚡ CODE GUNIE
       </Link>
 
       <nav className="flex items-center gap-4">

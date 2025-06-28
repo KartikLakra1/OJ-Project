@@ -13,9 +13,9 @@ const useSyncUser = () => {
       const token = await getToken();
       if (!token) return console.warn("⛔ No token available");
 
-      console.log("📨 Syncing user:");
-      console.log("Email:", user.primaryEmailAddress?.emailAddress);
-      console.log("Username:", user.firstName || user.username || user.id);
+      // console.log("📨 Syncing user:");
+      // console.log("Email:", user.primaryEmailAddress?.emailAddress);
+      // console.log("Username:", user.firstName || user.username || user.id);
 
       try {
 
@@ -24,8 +24,8 @@ const useSyncUser = () => {
   username: user.firstName || user.username || user.id,
 };
 
-console.log("🛰️ Payload sent to backend:", payload);
-        await axios.post(
+// console.log("🛰️ Payload sent to backend:", payload);
+        const isuserPresent = await axios.post(
           "http://localhost:5000/api/auth/sync",
           payload,
           {
@@ -34,6 +34,8 @@ console.log("🛰️ Payload sent to backend:", payload);
             },
           }
         );
+
+        console.log(isuserPresent?.data?.message);
 
         console.log("✅ User synced to backend");
       } catch (err) {

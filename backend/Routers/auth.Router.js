@@ -8,7 +8,7 @@ router.post("/sync", protect, async (req, res) => {
     const { sub: userId } = req.auth; // Clerk v4 token structure
     const { email, username } = req.body;
 
-    console.log("📥 Incoming sync:", { userId, email, username });
+    // console.log("📥 Incoming sync:", { userId, email, username });
 
     if (!userId || !email || !username) {
       return res.status(400).json({
