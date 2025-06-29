@@ -1,4 +1,5 @@
 import Problem from "../Models/Problem.model.js";
+import User from "../Models/auth.models.js";
 
 // GET all problems
 export const getAllProblems = async (req, res) => {
@@ -13,7 +14,16 @@ export const getAllProblems = async (req, res) => {
 // POST new problem (admin only)
 export const addProblem = async (req, res) => {
   try {
+    const {sub: userId} = req.auth;
     const { title, description, difficulty, constraints, sampleTestcases } = req.body;
+
+    const user = await User.findOne({clerkId: userId});
+    if(!user || user.role !== "admin"){
+      return res.status(403).json({
+        error : "Access denied: Admin only"
+      })
+    }
+
     const newProblem = new Problem({
       title,
       description,

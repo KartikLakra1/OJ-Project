@@ -4,10 +4,19 @@ import {
   SignInButton,
   SignOutButton,
   UserButton,
+  useUser,
 } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
+import useUserRole from "../../hooks/useUserRole";
 
 const Header = () => {
+  const { isSignedIn } = useUser();
+  const { role } = useUserRole();
+
+  // const isAdmin = user?.role === "admin";
+  // console.log("user role : ", user?.publicMetadata?.role);
+  // console.log("isadmin : ", isAdmin);
+
   return (
     <header className="flex items-center justify-between px-6 py-4 shadow-md bg-white">
       <Link
@@ -16,6 +25,17 @@ const Header = () => {
       >
         ⚡ CODE GUNIE
       </Link>
+
+      <div className="flex gap-4 items-center">
+        {isSignedIn && role === "admin" && (
+          <Link
+            to="/add-problem"
+            className="text-sm px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+          >
+            Add Problem
+          </Link>
+        )}
+      </div>
 
       <nav className="flex items-center gap-4">
         <Link
@@ -27,7 +47,7 @@ const Header = () => {
 
         <SignedIn>
           {/* Optionally show a user avatar */}
-          <UserButton afterSignOutUrl="/" />
+          <UserButton />
           <SignOutButton>
             <button className="px-4 py-1 bg-gray-200 rounded hover:bg-gray-300">
               Sign Out
