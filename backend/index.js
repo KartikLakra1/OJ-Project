@@ -5,6 +5,7 @@ dotenv.config();
 import connectDB from './Utils/db.js';
 import authRouter from './Routers/auth.Router.js';
 import problemRoutes from "./Routers/Problem.js";
+import submitRoutes from "./Routers/submit.Router.js";
 import {requireAuth} from "@clerk/clerk-sdk-node";
 
 connectDB();
@@ -25,6 +26,7 @@ app.get("/api/debug-auth", requireAuth(), (req, res) => {
 
 app.use('/api/auth/', authRouter);
 app.use("/api/problems" , problemRoutes);
+app.use("/api/submit" , submitRoutes);
 
 
 

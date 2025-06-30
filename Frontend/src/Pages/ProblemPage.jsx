@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import Editor from "@monaco-editor/react";
 import useApi from "../Utils/api";
+import { toast } from "react-toastify";
 
 const languageOptions = [
   { label: "C++17", value: "cpp" },
@@ -19,6 +20,7 @@ const Problem = () => {
 
   const [problem, setProblem] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [runResult, setRunResult] = useState(null); // replaces runOutput
 
   const [language, setLanguage] = useState("cpp");
   const [code, setCode] = useState("// write your solution here\n");
@@ -61,6 +63,43 @@ const Problem = () => {
       });
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  /* ─────────── RUN handler (first sample only) ─────────── */
+  const handleRun = async () => {
+    const sample = problem.sampleTestcases[0];
+    const expected = sample.output.trim();
+
+    try {
+      const res = await api.post("/submit/run", {
+        code,
+        language,
+        input: sample.input,
+      });
+
+      const actual = res.data.stdout?.trim() ?? "";
+      const verdict = actual === expected ? "Correct" : "Wrong Answer";
+
+      setRunResult({
+        input: sample.input,
+        output: actual,
+        expected,
+        verdict,
+      });
+
+      verdict === "Correct"
+        ? toast.success("✅ Correct output!")
+        : toast.error("✖ Wrong Answer");
+    } catch (err) {
+      console.error("❌ Run failed", err);
+      toast.error("⚠️ Execution error");
+      setRunResult({
+        input: sample.input,
+        output: err.response?.data?.stdout ?? "",
+        expected,
+        verdict: "Error",
+      });
     }
   };
 
@@ -138,13 +177,62 @@ const Problem = () => {
         />
 
         {/* Submit button */}
-        <button
-          onClick={handleSubmit}
-          disabled={submitting}
-          className="mt-4 w-full px-6 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50"
-        >
-          {submitting ? "Submitting…" : "Submit"}
-        </button>
+        <div className="flex gap-4 mt-4">
+          <button
+            onClick={handleRun}
+            className="flex-1 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Run
+          </button>
+
+          <button
+            onClick={handleSubmit}
+            disabled={submitting}
+            className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50"
+          >
+            {submitting ? "Submitting…" : "Submit"}
+          </button>
+        </div>
+
+        {runResult && (
+          <div className="mt-4 p-4 border rounded bg-gray-50 text-sm space-y-2">
+            <p>
+              <strong className="text-gray-700">Input:</strong>
+              <pre className="whitespace-pre-wrap bg-white p-2 rounded border mt-1">
+                {runResult.input}
+              </pre>
+            </p>
+
+            <p>
+              <strong className="text-gray-700">Your Output:</strong>
+              <pre className="whitespace-pre-wrap bg-white p-2 rounded border mt-1">
+                {runResult.output}
+              </pre>
+            </p>
+
+            <p>
+              <strong className="text-gray-700">Expected Output:</strong>
+              <pre className="whitespace-pre-wrap bg-white p-2 rounded border mt-1">
+                {runResult.expected}
+              </pre>
+            </p>
+
+            <p className="text-sm mt-2 font-semibold">
+              Verdict:
+              <span
+                className={
+                  runResult.verdict === "Correct"
+                    ? "text-green-600 ml-2"
+                    : runResult.verdict === "Wrong Answer"
+                    ? "text-red-600 ml-2"
+                    : "text-yellow-600 ml-2"
+                }
+              >
+                {runResult.verdict}
+              </span>
+            </p>
+          </div>
+        )}
 
         {/* Verdict box */}
         {verdict && (
