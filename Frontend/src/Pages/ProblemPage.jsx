@@ -124,9 +124,9 @@ const Problem = () => {
   if (!problem) return <p className="p-6">Problem not found.</p>;
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 p-6 max-w-[1300px] mx-auto">
+    <div className="flex flex-col md:flex-row gap-6 p-6 max-w-[100%] mx-auto">
       {/* ───── Left: Problem details ───── */}
-      <div className="md:w-1/2">
+      <div className="md:w-1/3">
         <h1 className="text-3xl font-bold mb-2">{problem.title}</h1>
         <p className="text-sm text-gray-600 mb-4">
           Difficulty:&nbsp;
@@ -163,7 +163,7 @@ const Problem = () => {
       </div>
 
       {/* ───── Right: Editor & Submit ───── */}
-      <div className="md:w-1/2">
+      <div className="md:w-2/3">
         {/* Language selector */}
         <div className="mb-3">
           <label className="block mb-1 font-medium">Language:</label>
