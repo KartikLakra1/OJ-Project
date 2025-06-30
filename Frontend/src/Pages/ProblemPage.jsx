@@ -49,18 +49,30 @@ const Problem = () => {
   const handleSubmit = async () => {
     setSubmitting(true);
     setVerdict(null);
+
     try {
       const res = await api.post("/submit", {
         problemId: id,
         language,
         code,
       });
-      setVerdict(res.data); // expected: { verdict, time, memory }
+
+      const result = res.data;
+      setVerdict(result);
+
+      if (result.verdict === "Accepted") {
+        toast.success("✅ Accepted");
+      } else if (result.verdict === "Wrong Answer") {
+        toast.error("❌ Wrong Answer on a test case");
+      } else {
+        toast.warn("⚠ Error: " + result.message);
+      }
     } catch (err) {
       setVerdict({
         verdict: "Error",
         message: err.response?.data?.error || err.message,
       });
+      toast.error("❌ Submission failed");
     } finally {
       setSubmitting(false);
     }
@@ -235,17 +247,24 @@ const Problem = () => {
         )}
 
         {/* Verdict box */}
-        {verdict && (
-          <div className="mt-4 p-4 border rounded bg-gray-50 text-sm">
-            {verdict.verdict === "Accepted" ? (
-              <p className="text-green-600 font-semibold">✔ Accepted</p>
-            ) : verdict.verdict === "Error" ? (
-              <p className="text-red-600 font-semibold">{verdict.message}</p>
-            ) : (
-              <p className="text-red-600 font-semibold">✖ {verdict.verdict}</p>
-            )}
-            {verdict.time !== undefined && <p>Time: {verdict.time} ms</p>}
-            {verdict.memory !== undefined && <p>Memory: {verdict.memory} KB</p>}
+        {verdict?.verdict === "Wrong Answer" && (
+          <div className="mt-2 p-4 border rounded bg-red-50 text-sm">
+            <p className="font-semibold text-red-600 mb-2">Failing Test Case</p>
+
+            <p className="mb-1 text-gray-700">Input:</p>
+            <pre className="whitespace-pre-wrap bg-white p-2 rounded border mb-2">
+              {verdict.input}
+            </pre>
+
+            <p className="mb-1 text-gray-700">Expected Output:</p>
+            <pre className="whitespace-pre-wrap bg-white p-2 rounded border mb-2">
+              {verdict.expected}
+            </pre>
+
+            <p className="mb-1 text-gray-700">Your Output:</p>
+            <pre className="whitespace-pre-wrap bg-white p-2 rounded border">
+              {verdict.actual}
+            </pre>
           </div>
         )}
       </div>

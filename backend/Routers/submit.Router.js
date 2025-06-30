@@ -51,49 +51,72 @@ router.post("/", protect, async (req, res) => {
     const problem = await Problem.findById(problemId);
     if (!problem) return res.status(404).json({ error: "Problem not found" });
 
-    const results = [];
+    /* ───────── loop through all visible + hidden tests ───────── */
+    for (let idx = 0; idx < problem.sampleTestcases.length; idx++) {
+      const test = problem.sampleTestcases[idx];
 
-    for (let test of problem.sampleTestcases) {
-      const submission = await axios.post(
+      const { data } = await axios.post(
         `${JUDGE0_URL}/submissions?base64_encoded=false&wait=true`,
         {
           source_code: code,
           language_id,
           stdin: test.input,
-          expected_output: test.output,
+          expected_output: test.output.trim(),
         },
         { headers: JUDGE0_HEADERS }
       );
 
-      const { status, stdout } = submission.data;
+      const { status, stdout = "", stderr = "", compile_output = "" } = data;
+      const verdictById = {
+        3: "Accepted",
+        4: "Wrong Answer",
+        5: "Time Limit Exceeded",
+        6: "Compilation Error",
+        7: "Runtime Error",
+        11: "Runtime Error",
+      };
 
+      /* Handle NON‑ACCEPTED status immediately */
       if (status.id !== 3) {
         return res.status(200).json({
-          verdict: "Error",
-          message: status.description,
-        });
-      }
-
-      if (stdout?.trim() !== test.output.trim()) {
-        return res.status(200).json({
-          verdict: "Wrong Answer",
+          verdict: verdictById[status.id] || status.description,
+          testCaseIndex: idx + 1,
           input: test.input,
           expected: test.output,
           actual: stdout,
+          stderr,
+          compile_output,
+          time: data.time,
+          memory: data.memory,
         });
       }
 
-      results.push(submission.data);
+      /* Compare outputs even if Judge0 said “Accepted” (safety) */
+      if (stdout.trim() !== test.output.trim()) {
+        return res.status(200).json({
+          verdict: "Wrong Answer",
+          testCaseIndex: idx + 1,
+          input: test.input,
+          expected: test.output,
+          actual: stdout.trim(),
+          time: data.time,
+          memory: data.memory,
+        });
+      }
     }
 
-    res.status(200).json({
+    /* All cases passed */
+    return res.status(200).json({
       verdict: "Accepted",
-      time: results[0].time || 0,
-      memory: results[0].memory || 0,
+      time: 0,          // Judge0 returns per‑case; aggregate if you wish
+      memory: 0,
     });
   } catch (err) {
     console.error("❌ Submit error:", err.response?.data || err.message);
-    res.status(500).json({ error: "Submit failed", details: err.message });
+    return res.status(500).json({
+      verdict: "Error",
+      message: err.response?.data?.message || err.message,
+    });
   }
 });
 
