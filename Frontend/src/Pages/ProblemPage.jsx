@@ -47,6 +47,7 @@ const Problem = () => {
 
   /* ───────────────────────────── Submissions ───────────────────────────── */
   const handleSubmit = async () => {
+    setRunResult(null);
     setSubmitting(true);
     setVerdict(null);
 
@@ -80,6 +81,7 @@ const Problem = () => {
 
   /* ─────────── RUN handler (first sample only) ─────────── */
   const handleRun = async () => {
+    setVerdict(null);
     const sample = problem.sampleTestcases[0];
     const expected = sample.output.trim();
 
