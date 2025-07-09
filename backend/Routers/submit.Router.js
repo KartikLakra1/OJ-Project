@@ -3,6 +3,7 @@ import { protect } from '../Utils/auth.js';
 import axios from 'axios';
 import Problem from "../Models/Problem.model.js"
 import Submission from "../Models/Submittion.model.js"
+import User from "../Models/auth.models.js";
 
 const router = express.Router();
 
@@ -43,7 +44,7 @@ router.post("/run", protect, async (req, res) => {
 
 router.post("/", protect, async (req, res) => {
   const { problemId, code, language } = req.body;
-  const userId = req.auth.sub; // Clerk user ID
+  const userId = req.auth.sub;
   const language_id = languageMap[language];
 
   if (!problemId || !code || !language_id) {
@@ -61,7 +62,6 @@ router.post("/", protect, async (req, res) => {
 
     for (let idx = 0; idx < testcases.length; idx++) {
       const test = testcases[idx];
-
       const { data } = await axios.post(
         `${JUDGE0_URL}/submissions?base64_encoded=false&wait=true`,
         {
@@ -78,32 +78,19 @@ router.post("/", protect, async (req, res) => {
 
       lastData = data;
 
-      // Compile or Runtime error
       if (status.id !== 3) {
         finalVerdict = status.description;
-        failedCase = {
-          input: test.input,
-          expected,
-          actual,
-          stderr,
-          compile_output,
-        };
+        failedCase = { input: test.input, expected, actual, stderr, compile_output };
         break;
       }
 
-      // Wrong Answer
       if (actual !== expected) {
         finalVerdict = "Wrong Answer";
-        failedCase = {
-          input: test.input,
-          expected,
-          actual,
-        };
+        failedCase = { input: test.input, expected, actual };
         break;
       }
     }
 
-    // Save the submission regardless of verdict
     const submission = new Submission({
       problemId,
       userId,
@@ -119,7 +106,14 @@ router.post("/", protect, async (req, res) => {
 
     await submission.save();
 
+    // ✅ Add to user's submissions if Accepted
     if (finalVerdict === "Accepted") {
+      const user = await User.findOne({ clerkId: userId });
+      if (user && !user.submissions.includes(problemId)) {
+        user.submissions.push(problemId);
+        await user.save();
+      }
+
       return res.status(200).json({ verdict: "Accepted" });
     } else {
       return res.status(200).json({
@@ -137,7 +131,6 @@ router.post("/", protect, async (req, res) => {
     });
   }
 });
-
 
 
 
