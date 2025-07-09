@@ -5,6 +5,7 @@ import { useUser } from "@clerk/clerk-react";
 import Editor from "@monaco-editor/react";
 import useApi from "../Utils/api";
 import { toast } from "react-toastify";
+import useGeminiReview from "../hooks/useGeminiReview";
 
 const languageOptions = [
   { label: "C++17", value: "cpp" },
@@ -17,6 +18,8 @@ const Problem = () => {
   const { id } = useParams(); // problem ID from URL
   const { isSignedIn } = useUser();
   const api = useApi();
+  const { reviewCode } = useGeminiReview();
+  const [aiReview, setAiReview] = useState(null);
 
   const [problem, setProblem] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -60,6 +63,10 @@ const Problem = () => {
 
       const result = res.data;
       setVerdict(result);
+
+      // 🔮 Call Gemini after successful submission
+      const review = await reviewCode(code, language);
+      setAiReview(review);
 
       if (result.verdict === "Accepted") {
         toast.success("✅ Accepted");
@@ -160,6 +167,16 @@ const Problem = () => {
             </p>
           </div>
         ))}
+
+        {/* AI Review box */}
+        {aiReview && (
+          <div className="mt-4 p-4 border rounded bg-yellow-50 text-sm">
+            <h3 className="font-semibold text-yellow-700 mb-2">
+              💡 Gemini AI Review
+            </h3>
+            <p className="whitespace-pre-wrap">{aiReview}</p>
+          </div>
+        )}
       </div>
 
       {/* ───── Right: Editor & Submit ───── */}

@@ -26,18 +26,18 @@ const Header = () => {
         ⚡ CODE GUNIE
       </Link>
 
-      <div className="flex gap-4 items-center">
-        {isSignedIn && role === "admin" && (
-          <Link
-            to="/add-problem"
-            className="text-sm px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-          >
-            Add Problem
-          </Link>
-        )}
-      </div>
-
       <nav className="flex items-center gap-4">
+        <div className="flex gap-4 items-center">
+          {isSignedIn && role === "admin" && (
+            <Link
+              to="/add-problem"
+              className="text-sm px-4 py-2 text-slate-950 rounded font-bold hover:underline "
+            >
+              Add Problem
+            </Link>
+          )}
+        </div>
+
         <Link
           to="/"
           className="text-gray-700 hover:text-indigo-600 font-medium"
@@ -48,11 +48,6 @@ const Header = () => {
         <SignedIn>
           {/* Optionally show a user avatar */}
           <UserButton />
-          <SignOutButton>
-            <button className="px-4 py-1 bg-gray-200 rounded hover:bg-gray-300">
-              Sign Out
-            </button>
-          </SignOutButton>
         </SignedIn>
 
         <SignedOut>
