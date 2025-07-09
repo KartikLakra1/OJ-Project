@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useApi from "../Utils/api";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const AddProblem = () => {
   const api = useApi();
@@ -12,41 +13,61 @@ const AddProblem = () => {
     difficulty: "Easy",
     constraints: "",
     sampleTestcases: [{ input: "", output: "" }],
+    hiddenTestcases: [{ input: "", output: "" }],
+    tags: [],
   });
+
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleTestcaseChange = (idx, field, value) => {
-    const updated = [...form.sampleTestcases];
+  const handleTestcaseChange = (type, idx, field, value) => {
+    const updated = [...form[type]];
     updated[idx][field] = value;
-    setForm({ ...form, sampleTestcases: updated });
+    setForm({ ...form, [type]: updated });
   };
 
-  const addTestcase = () => {
+  const addTestcase = (type) => {
     setForm({
       ...form,
-      sampleTestcases: [...form.sampleTestcases, { input: "", output: "" }],
+      [type]: [...form[type], { input: "", output: "" }],
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!form.title.trim() || !form.description.trim()) {
+      toast.error("Title and description are required.");
+      return;
+    }
+
+    setLoading(true);
+
     try {
-      await api.post("/problems/add", form);
-      alert("✅ Problem added");
+      const payload = {
+        ...form,
+        tags: form.tags.filter((tag) => tag.trim() !== ""), // remove empty tags
+      };
+
+      await api.post("/problems/add", payload);
+      toast.success("✅ Problem added successfully");
       navigate("/");
     } catch (err) {
       console.error("❌ Failed to add problem:", err.response?.data || err);
-      alert("❌ Add failed");
+      toast.error(err.response?.data?.error || "Add failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Add New Problem</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Title */}
         <input
           type="text"
           name="title"
@@ -57,16 +78,18 @@ const AddProblem = () => {
           required
         />
 
+        {/* Description */}
         <textarea
           name="description"
           placeholder="Description"
           value={form.description}
           onChange={handleChange}
           className="w-full border p-2 rounded"
-          rows={4}
+          rows={5}
           required
         />
 
+        {/* Constraints */}
         <textarea
           name="constraints"
           placeholder="Constraints"
@@ -76,6 +99,7 @@ const AddProblem = () => {
           rows={3}
         />
 
+        {/* Difficulty */}
         <select
           name="difficulty"
           value={form.difficulty}
@@ -87,44 +111,125 @@ const AddProblem = () => {
           <option>Hard</option>
         </select>
 
-        <h2 className="font-medium mt-4">Sample Test Cases</h2>
-        {form.sampleTestcases.map((tc, idx) => (
-          <div key={idx} className="border p-3 rounded space-y-2 bg-gray-50">
-            <input
-              type="text"
-              placeholder="Input"
-              value={tc.input}
-              onChange={(e) =>
-                handleTestcaseChange(idx, "input", e.target.value)
-              }
-              className="w-full border p-2 rounded"
-              required
-            />
-            <input
-              type="text"
-              placeholder="Output"
-              value={tc.output}
-              onChange={(e) =>
-                handleTestcaseChange(idx, "output", e.target.value)
-              }
-              className="w-full border p-2 rounded"
-              required
-            />
-          </div>
-        ))}
-        <button
-          type="button"
-          onClick={addTestcase}
-          className="text-sm text-indigo-600 hover:underline"
-        >
-          + Add Another Test Case
-        </button>
+        {/* Tags */}
+        <input
+          type="text"
+          placeholder="Tags (comma separated)"
+          value={form.tags.join(", ")}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              tags: e.target.value.split(",").map((tag) => tag.trim()),
+            })
+          }
+          className="w-full border p-2 rounded"
+        />
 
+        {/* Sample Test Cases */}
+        <div>
+          <h2 className="font-medium mt-6 mb-2">Sample Test Cases</h2>
+          {form.sampleTestcases.map((tc, idx) => (
+            <div
+              key={idx}
+              className="border p-3 rounded space-y-2 bg-gray-50 mb-3"
+            >
+              <textarea
+                placeholder="Sample Input"
+                value={tc.input}
+                onChange={(e) =>
+                  handleTestcaseChange(
+                    "sampleTestcases",
+                    idx,
+                    "input",
+                    e.target.value
+                  )
+                }
+                className="w-full border p-2 rounded"
+                rows={2}
+                required
+              />
+              <textarea
+                placeholder="Sample Output"
+                value={tc.output}
+                onChange={(e) =>
+                  handleTestcaseChange(
+                    "sampleTestcases",
+                    idx,
+                    "output",
+                    e.target.value
+                  )
+                }
+                className="w-full border p-2 rounded"
+                rows={2}
+                required
+              />
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => addTestcase("sampleTestcases")}
+            className="text-sm text-indigo-600 hover:underline"
+          >
+            + Add Sample Test Case
+          </button>
+        </div>
+
+        {/* Hidden Test Cases */}
+        <div>
+          <h2 className="font-medium mt-6 mb-2">Hidden Test Cases</h2>
+          {form.hiddenTestcases.map((tc, idx) => (
+            <div
+              key={idx}
+              className="border p-3 rounded space-y-2 bg-gray-100 mb-3"
+            >
+              <textarea
+                placeholder="Hidden Input"
+                value={tc.input}
+                onChange={(e) =>
+                  handleTestcaseChange(
+                    "hiddenTestcases",
+                    idx,
+                    "input",
+                    e.target.value
+                  )
+                }
+                className="w-full border p-2 rounded"
+                rows={2}
+                required
+              />
+              <textarea
+                placeholder="Hidden Output"
+                value={tc.output}
+                onChange={(e) =>
+                  handleTestcaseChange(
+                    "hiddenTestcases",
+                    idx,
+                    "output",
+                    e.target.value
+                  )
+                }
+                className="w-full border p-2 rounded"
+                rows={2}
+                required
+              />
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => addTestcase("hiddenTestcases")}
+            className="text-sm text-indigo-600 hover:underline"
+          >
+            + Add Hidden Test Case
+          </button>
+        </div>
+
+        {/* Submit Button */}
         <button
           type="submit"
-          className="mt-4 w-full px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+          disabled={loading}
+          className="mt-4 w-full px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-60"
         >
-          Submit Problem
+          {loading ? "Submitting…" : "Submit Problem"}
         </button>
       </form>
     </div>

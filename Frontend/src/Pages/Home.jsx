@@ -58,6 +58,7 @@ const Home = () => {
               <tr>
                 <th className="px-4 py-3">Title</th>
                 <th className="px-4 py-3">Difficulty</th>
+                <th className="px-4 py-3">Tags</th>
                 <th className="px-4 py-3">Status</th>
               </tr>
             </thead>
@@ -68,7 +69,7 @@ const Home = () => {
                   <tr
                     key={problem._id}
                     className={`border-t hover:bg-gray-50 ${
-                      isSubmitted ? "bg-green-100" : ""
+                      isSubmitted ? "bg-green-50" : ""
                     }`}
                   >
                     <td className="px-4 py-3">
@@ -79,6 +80,7 @@ const Home = () => {
                         {problem.title}
                       </Link>
                     </td>
+
                     <td className="px-4 py-3">
                       <span
                         className={`px-2 py-1 rounded text-sm font-medium
@@ -94,6 +96,22 @@ const Home = () => {
                         {problem.difficulty}
                       </span>
                     </td>
+
+                    <td className="px-4 py-3 space-x-2">
+                      {problem.tags && problem.tags.length > 0 ? (
+                        problem.tags.map((tag, idx) => (
+                          <span
+                            key={idx}
+                            className="inline-block bg-gray-200 text-gray-800 text-xs px-2 py-1 rounded-full"
+                          >
+                            {tag}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-gray-400 italic text-sm">—</span>
+                      )}
+                    </td>
+
                     <td className="px-4 py-3">
                       {isSubmitted && (
                         <span className="text-green-600 font-semibold">

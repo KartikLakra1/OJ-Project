@@ -9,7 +9,7 @@ export const getAllProblems = async (req, res) => {
     const { sub: userId } = req.auth;
 
     // Fetch all problems (title and difficulty only)
-    const problems = await Problem.find().select("title difficulty");
+    const problems = await Problem.find().select("title difficulty tags");
 
     // Fetch the user's submitted problems
     const user = await User.findOne({ clerkId: userId }).select("submissions");
