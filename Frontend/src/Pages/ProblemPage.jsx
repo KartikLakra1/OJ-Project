@@ -1,6 +1,6 @@
 // src/pages/Problem.jsx
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import Editor from "@monaco-editor/react";
 import useApi from "../Utils/api";
@@ -16,6 +16,7 @@ const languageOptions = [
 
 const Problem = () => {
   const { id } = useParams(); // problem ID from URL
+  const navigate = useNavigate();
   const { isSignedIn } = useUser();
   const api = useApi();
   const { reviewCode } = useGeminiReview();
@@ -70,6 +71,9 @@ const Problem = () => {
 
       if (result.verdict === "Accepted") {
         toast.success("✅ Accepted");
+        setTimeout(() => {
+          navigate("/"); // ⬅️ redirect to homepage after short delay
+        }, 1500); // 1.5s to allow user to read the toast
       } else if (result.verdict === "Wrong Answer") {
         toast.error("❌ Wrong Answer on a test case");
       } else {
