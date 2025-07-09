@@ -2,6 +2,7 @@ import express from 'express';
 import { protect } from '../Utils/auth.js';
 import axios from 'axios';
 import Problem from "../Models/Problem.model.js"
+import Submission from "../Models/Submittion.model.js"
 
 const router = express.Router();
 
@@ -42,6 +43,7 @@ router.post("/run", protect, async (req, res) => {
 
 router.post("/", protect, async (req, res) => {
   const { problemId, code, language } = req.body;
+  const userId = req.auth.sub; // Clerk user ID
   const language_id = languageMap[language];
 
   if (!problemId || !code || !language_id) {
@@ -53,7 +55,9 @@ router.post("/", protect, async (req, res) => {
     if (!problem) return res.status(404).json({ error: "Problem not found" });
 
     const testcases = problem.sampleTestcases;
-    let lastAccepted = null;
+    let finalVerdict = "Accepted";
+    let failedCase = null;
+    let lastData = null;
 
     for (let idx = 0; idx < testcases.length; idx++) {
       const test = testcases[idx];
@@ -69,51 +73,62 @@ router.post("/", protect, async (req, res) => {
       );
 
       const { status, stdout = "", stderr = "", compile_output = "" } = data;
-      const actual = stdout.trim();
+      const actual = (stdout || "").trim();
       const expected = test.output.trim();
 
-      // Return if Judge0 gave an error (not status.id === 3)
+      lastData = data;
+
+      // Compile or Runtime error
       if (status.id !== 3) {
-        return res.status(200).json({
-          verdict: status.description,
-          testCaseIndex: idx + 1,
+        finalVerdict = status.description;
+        failedCase = {
           input: test.input,
           expected,
           actual,
           stderr,
           compile_output,
-          time: data.time,
-          memory: data.memory,
-        });
+        };
+        break;
       }
 
-      // Return if output is wrong
+      // Wrong Answer
       if (actual !== expected) {
-        return res.status(200).json({
-          verdict: "Wrong Answer",
-          testCaseIndex: idx + 1,
+        finalVerdict = "Wrong Answer";
+        failedCase = {
           input: test.input,
           expected,
           actual,
-          time: data.time,
-          memory: data.memory,
-        });
+        };
+        break;
       }
-
-      // If correct, remember the last accepted test
-      lastAccepted = {
-        verdict: "Accepted",
-        testCaseIndex: idx + 1,
-        input: test.input,
-        expected,
-        actual,
-        time: data.time,
-        memory: data.memory,
-      };
     }
 
-    // All passed — return last one
-    return res.status(200).json(lastAccepted);
+    // Save the submission regardless of verdict
+    const submission = new Submission({
+      problemId,
+      userId,
+      code,
+      language,
+      verdict: finalVerdict,
+      input: failedCase?.input,
+      output: failedCase?.actual,
+      expected: failedCase?.expected,
+      time: lastData?.time,
+      memory: lastData?.memory,
+    });
+
+    await submission.save();
+
+    if (finalVerdict === "Accepted") {
+      return res.status(200).json({ verdict: "Accepted" });
+    } else {
+      return res.status(200).json({
+        verdict: finalVerdict,
+        ...failedCase,
+        time: lastData?.time,
+        memory: lastData?.memory,
+      });
+    }
   } catch (err) {
     console.error("❌ Submit error:", err.response?.data || err.message);
     return res.status(500).json({

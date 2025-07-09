@@ -12,7 +12,7 @@ import axios from "axios";
 const Home = () => {
   const { isSignedIn } = useUser();
   const [problems, setProblems] = useState([]);
-  const [acceptedProblems, setAcceptedProblems] = useState(new Set());
+  const [submittedIds, setSubmittedIds] = useState([]);
   const { getToken } = useAuth();
 
   useEffect(() => {
@@ -21,25 +21,17 @@ const Home = () => {
     const fetchProblems = async () => {
       try {
         const token = await getToken();
-        const [problemsRes, submissionsRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/problems"),
-          axios.get("http://localhost:5000/api/submissions", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-        ]);
 
-        setProblems(problemsRes.data);
+        const res = await axios.get("http://localhost:5000/api/problems", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-        const accepted = new Set(
-          submissionsRes.data
-            .filter((s) => s.verdict === "Accepted")
-            .map((s) => s.problemId)
-        );
-        setAcceptedProblems(accepted);
+        setProblems(res.data.problems || []);
+        setSubmittedIds(res.data.submittedProblemIds || []);
       } catch (err) {
-        console.error("❌ Failed to fetch data:", err);
+        console.error("❌ Failed to fetch problems:", err);
       }
     };
 
@@ -47,7 +39,7 @@ const Home = () => {
   }, [isSignedIn]);
 
   return (
-    <div className="p-6 min-h-screen bg-white text-black dark:bg-zinc-900 dark:text-white">
+    <div className="p-6 min-h-screen bg-white text-black">
       <SignedOut>
         <div className="mt-10 text-center">
           <h2 className="text-2xl font-semibold mb-4">
@@ -62,51 +54,52 @@ const Home = () => {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left border rounded-lg overflow-hidden">
-            <thead className="bg-gray-100 text-gray-700 dark:bg-zinc-800 dark:text-gray-300 uppercase text-sm">
+            <thead className="bg-gray-100 text-gray-700 uppercase text-sm">
               <tr>
                 <th className="px-4 py-3">Title</th>
                 <th className="px-4 py-3">Difficulty</th>
+                <th className="px-4 py-3">Status</th>
               </tr>
             </thead>
             <tbody>
               {problems.map((problem) => {
-                const isDone = acceptedProblems.has(problem._id);
+                const isSubmitted = submittedIds.includes(problem._id);
                 return (
                   <tr
                     key={problem._id}
-                    className={`border-t hover:bg-gray-50 dark:hover:bg-zinc-800 ${
-                      isDone ? "bg-green-100 dark:bg-green-900" : ""
+                    className={`border-t hover:bg-gray-50 ${
+                      isSubmitted ? "bg-green-100" : ""
                     }`}
                   >
                     <td className="px-4 py-3">
                       <Link
                         to={`/problems/${problem._id}`}
-                        className={`hover:underline ${
-                          isDone
-                            ? "text-green-700 dark:text-green-300"
-                            : "text-indigo-600"
-                        }`}
+                        className="text-indigo-600 hover:underline"
                       >
                         {problem.title}
                       </Link>
-                      {isDone && (
-                        <span className="ml-2 inline-block text-green-700 dark:text-green-300 text-xs font-semibold bg-green-200 dark:bg-green-800 px-2 py-0.5 rounded-full">
-                          ✔ Done
-                        </span>
-                      )}
                     </td>
                     <td className="px-4 py-3">
                       <span
-                        className={`px-2 py-1 rounded text-sm font-medium ${
-                          problem.difficulty === "Easy"
-                            ? "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-300"
-                            : problem.difficulty === "Medium"
-                            ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-300"
-                            : "bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-300"
-                        }`}
+                        className={`px-2 py-1 rounded text-sm font-medium
+                          ${
+                            problem.difficulty === "Easy"
+                              ? "bg-green-100 text-green-800"
+                              : problem.difficulty === "Medium"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-red-100 text-red-800"
+                          }
+                        `}
                       >
                         {problem.difficulty}
                       </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      {isSubmitted && (
+                        <span className="text-green-600 font-semibold">
+                          ✅ Submitted
+                        </span>
+                      )}
                     </td>
                   </tr>
                 );

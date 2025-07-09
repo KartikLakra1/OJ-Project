@@ -4,7 +4,7 @@ import {getAllProblems,addProblem, getAproblem} from "../Controllers/poblemContr
 import {protect} from "../Utils/auth.js";
 
 // Public: List problems
-router.get("/", getAllProblems);
+router.get("/",protect, getAllProblems);
 
 // Protected: Add problem (admin only)
 router.post("/add", protect, addProblem);

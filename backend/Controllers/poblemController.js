@@ -1,12 +1,29 @@
 import Problem from "../Models/Problem.model.js";
 import User from "../Models/auth.models.js";
 
+
 /* ────────────────────────────── GET all problems ────────────────────────────── */
 export const getAllProblems = async (req, res) => {
   try {
+    // Get current logged-in user's Clerk ID
+    const { sub: userId } = req.auth;
+
+    // Fetch all problems (title and difficulty only)
     const problems = await Problem.find().select("title difficulty");
-    res.json(problems);
+
+    // Fetch the user's submitted problems
+    const user = await User.findOne({ clerkId: userId }).select("submissions");
+
+    const submittedProblemIds = user?.submissions?.map((id) =>
+      id.toString()
+    ) || [];
+
+    res.json({
+      problems,
+      submittedProblemIds,
+    });
   } catch (error) {
+    console.error("❌ getAllProblems error:", error);
     res.status(500).json({ error: "Failed to fetch problems" });
   }
 };
