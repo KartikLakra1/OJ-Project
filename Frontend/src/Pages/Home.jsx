@@ -8,6 +8,7 @@ import {
 } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import video from "../assets/horizontal-video.mp4";
 
 const Home = () => {
   const { isSignedIn } = useUser();
@@ -43,13 +44,23 @@ const Home = () => {
   }, [isSignedIn]);
 
   return (
-    <div className="p-6 min-h-screen flex  bg-white text-black">
+    <div className=" min-h-screen flex align-center justify-center bg-gradient-to-r from-slate-700 via-gray-800 to-slate-950 text-white">
       <SignedOut>
-        <div className="mt-10 text-center">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute top-0 left-0 w-full h-full object-cover z-0"
+          src={video}
+        />
+
+        <div className="z-200 mt-50 text-center">
           <h2 className="text-2xl font-semibold mb-4">
-            Please sign in to view problems
+            Please sign in to view Problems
           </h2>
-          <SignIn />
+          <video src="" />
+          {/* <SignIn /> */}
         </div>
       </SignedOut>
 

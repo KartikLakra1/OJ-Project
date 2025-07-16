@@ -18,12 +18,12 @@ const Header = () => {
   // console.log("isadmin : ", isAdmin);
 
   return (
-    <header className="flex items-center justify-between px-6 py-4 shadow-md bg-white">
+    <header className="fixed w-[100%] z-100 flex items-center justify-between px-6 py-4 shadow-md bg-gradient-to-r from-slate-800 to-slate-950 ">
       <Link
         to="/"
-        className="text-2xl font-bold text-indigo-600 hover:text-indigo-700 transition"
+        className="text-2xl font-bold text-indigo-100 hover:text-indigo-200 transition"
       >
-        ⚡ CODE GUNIE
+        ⚡CODE GUNIE
       </Link>
 
       <nav className="flex items-center gap-4">
@@ -31,17 +31,14 @@ const Header = () => {
           {isSignedIn && role === "admin" && (
             <Link
               to="/add-problem"
-              className="text-sm px-4 py-2 text-slate-950 rounded font-bold hover:underline "
+              className="text-sm px-4 py-2 text-white rounded font-bold hover:underline "
             >
               Add Problem
             </Link>
           )}
         </div>
 
-        <Link
-          to="/"
-          className="text-gray-700 hover:text-indigo-600 font-medium"
-        >
+        <Link to="/" className="text-white font-medium">
           Home
         </Link>
 
@@ -52,7 +49,7 @@ const Header = () => {
 
         <SignedOut>
           <SignInButton mode="modal">
-            <button className="px-4 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+            <button className="z-100 px-4 py-1 text-white font-bold cursor-pointer">
               Sign In
             </button>
           </SignInButton>
