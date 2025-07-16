@@ -21,12 +21,16 @@ const Home = () => {
     const fetchProblems = async () => {
       try {
         const token = await getToken();
-
-        const res = await axios.get("http://localhost:5000/api/problems", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        console.log("token : ", token);
+        console.log("env : ", import.meta.env.VITE_BACKEND_URL);
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/problems`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         setProblems(res.data.problems || []);
         setSubmittedIds(res.data.submittedProblemIds || []);
@@ -39,7 +43,7 @@ const Home = () => {
   }, [isSignedIn]);
 
   return (
-    <div className="p-6 min-h-screen bg-white text-black">
+    <div className="p-6 min-h-screen flex  bg-white text-black">
       <SignedOut>
         <div className="mt-10 text-center">
           <h2 className="text-2xl font-semibold mb-4">

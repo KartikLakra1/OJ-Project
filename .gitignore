@@ -8,3 +8,5 @@ Frontend/eslint.config.js
 Frontend/vite.config.js
 Frontend/.env
 Frontend/.gitignore
+.env
+.env.frontend

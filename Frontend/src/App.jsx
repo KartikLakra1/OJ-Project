@@ -8,6 +8,7 @@ import Footer from "./Components/Footer/Footer.jsx";
 import AddProblem from "./Pages/AddProblem.jsx";
 
 function App() {
+  // console.log("BACKEND:", import.meta.env.VITE_BACKEND_URL);
   useSyncUser();
 
   return (
