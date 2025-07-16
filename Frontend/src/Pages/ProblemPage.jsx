@@ -135,16 +135,16 @@ const Problem = () => {
   if (!problem) return <p className="p-6">Problem not found.</p>;
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 p-6 max-w-[100%] mx-auto">
+    <div className="flex flex-col bg-slate-950 text-white pt-20 md:flex-row gap-6 p-6 max-w-[100%] mx-auto min-h-[80vh]">
       {/* ───── Left: Problem details ───── */}
       <div className="md:w-1/3">
         <h1 className="text-3xl font-bold mb-2">{problem.title}</h1>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-white mb-4  ">
           Difficulty:&nbsp;
           <span
             className={
               problem.difficulty === "Easy"
-                ? "text-green-600"
+                ? "text-green-600 "
                 : problem.difficulty === "Medium"
                 ? "text-yellow-600"
                 : "text-red-600"
@@ -162,7 +162,7 @@ const Problem = () => {
 
         <h2 className="text-xl font-semibold mt-6 mb-2">Sample Test Cases</h2>
         {problem.sampleTestcases.map((t, i) => (
-          <div key={i} className="border p-3 rounded mb-3 bg-gray-50">
+          <div key={i} className="border p-3 rounded mb-3 bg-gray-600">
             <p className="mb-1">
               <strong>Input {i + 1}:</strong> {t.input}
             </p>
@@ -194,7 +194,11 @@ const Problem = () => {
             className="border rounded px-2 py-1 w-full"
           >
             {languageOptions.map((opt) => (
-              <option value={opt.value} key={opt.value}>
+              <option
+                value={opt.value}
+                key={opt.value}
+                className="bg-slate-950"
+              >
                 {opt.label}
               </option>
             ))}
@@ -215,7 +219,7 @@ const Problem = () => {
         <div className="flex gap-4 mt-4">
           <button
             onClick={handleRun}
-            className="flex-1 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+            className="flex-1 px-4 py-2 bg-gray-200 rounded  text-black hover:bg-gray-300"
           >
             Run
           </button>
@@ -230,7 +234,7 @@ const Problem = () => {
         </div>
 
         {runResult && (
-          <div className="mt-4 p-4 border rounded bg-gray-50 text-sm space-y-2">
+          <div className="mt-4 p-4 border rounded bg-gray-50 text-black text-sm space-y-2">
             <p>
               <strong className="text-gray-700">Input:</strong>
               <pre className="whitespace-pre-wrap bg-white p-2 rounded border mt-1">
@@ -271,7 +275,7 @@ const Problem = () => {
 
         {/* Verdict box */}
         {verdict?.verdict === "Wrong Answer" && (
-          <div className="mt-2 p-4 border rounded bg-red-50 text-sm">
+          <div className="mt-2 p-4 border rounded text-black bg-red-50 text-sm">
             <p className="font-semibold text-red-600 mb-2">Failing Test Case</p>
 
             <p className="mb-1 text-gray-700">Input:</p>
