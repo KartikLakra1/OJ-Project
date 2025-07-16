@@ -14,6 +14,7 @@ const Home = () => {
   const { isSignedIn } = useUser();
   const [problems, setProblems] = useState([]);
   const [submittedIds, setSubmittedIds] = useState([]);
+  const [view, setView] = useState("card");
   const { getToken } = useAuth();
 
   useEffect(() => {
@@ -24,17 +25,16 @@ const Home = () => {
         const token = await getToken();
         console.log("token : ", token);
         console.log("env : ", import.meta.env.VITE_BACKEND_URL);
-        const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/problems`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await axios.get(`http://localhost:5000/api/problems`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         setProblems(res.data.problems || []);
         setSubmittedIds(res.data.submittedProblemIds || []);
+        console.log("problems : ", problems);
+        console.log("problems fetched successfully");
       } catch (err) {
         console.error("❌ Failed to fetch problems:", err);
       }
@@ -44,7 +44,7 @@ const Home = () => {
   }, [isSignedIn]);
 
   return (
-    <div className=" min-h-screen flex align-center justify-center bg-gradient-to-r from-slate-700 via-gray-800 to-slate-950 text-white">
+    <div className=" min-h-screen flex flex-col align-middle justify-start bg-gradient-to-r from-slate-700 via-gray-800 to-slate-950 text-white">
       <SignedOut>
         <video
           autoPlay
@@ -59,46 +59,51 @@ const Home = () => {
           <h2 className="text-2xl font-semibold mb-4">
             Please sign in to view Problems
           </h2>
-          <video src="" />
           {/* <SignIn /> */}
         </div>
       </SignedOut>
 
       <SignedIn>
-        <h1 className="text-3xl font-bold mb-6">All Problems</h1>
+        <h1 className="text-3xl font-bold mt-20 mb-5">All Problems</h1>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border rounded-lg overflow-hidden">
-            <thead className="bg-gray-100 text-gray-700 uppercase text-sm">
-              <tr>
-                <th className="px-4 py-3">Title</th>
-                <th className="px-4 py-3">Difficulty</th>
-                <th className="px-4 py-3">Tags</th>
-                <th className="px-4 py-3">Status</th>
-              </tr>
-            </thead>
-            <tbody>
+        <div className="flex font-bold fixed top-32 right-0 bg-yellow-400 gap-3 p-2 rounded-md z-200 text-black cursor-pointer">
+          <span>View : </span>
+          <h1
+            className="hover:underline"
+            onClick={() => {
+              setView("card");
+            }}
+          >
+            CARD
+          </h1>
+          <h1
+            className="hover:underline"
+            onClick={() => {
+              setView("table");
+            }}
+          >
+            TABLE
+          </h1>
+        </div>
+
+        {view === "card" ? (
+          <>
+            {/* Problem cards */}
+            <div className="flex flex-wrap justify-center align-middle gap-[2rem] w-[100%] p-1 pb-7">
               {problems.map((problem) => {
                 const isSubmitted = submittedIds.includes(problem._id);
-                return (
-                  <tr
-                    key={problem._id}
-                    className={`border-t hover:bg-gray-50 ${
-                      isSubmitted ? "bg-green-50" : ""
-                    }`}
-                  >
-                    <td className="px-4 py-3">
-                      <Link
-                        to={`/problems/${problem._id}`}
-                        className="text-indigo-600 hover:underline"
-                      >
-                        {problem.title}
-                      </Link>
-                    </td>
 
-                    <td className="px-4 py-3">
-                      <span
-                        className={`px-2 py-1 rounded text-sm font-medium
+                return (
+                  <Link to={`/problems/${problem._id}`}>
+                    <div
+                      key={problem._id}
+                      className="bg-slate-500 font-bold border-gray-600 border-2 rounded-xl flex md:flex-wrap flex-col text-white w-[90vw] md:w-[500px] justify-center p-2.5 hover:bg-gradient-to-r from-slate-800 to-slate-600 min-h-28"
+                    >
+                      <h1 className="flex flex-row justify-between text-2xl">
+                        {problem.title}
+
+                        <span
+                          className={`px-2 py-1 rounded text-sm font-medium
                           ${
                             problem.difficulty === "Easy"
                               ? "bg-green-100 text-green-800"
@@ -107,39 +112,129 @@ const Home = () => {
                               : "bg-red-100 text-red-800"
                           }
                         `}
-                      >
-                        {problem.difficulty}
-                      </span>
-                    </td>
-
-                    <td className="px-4 py-3 space-x-2">
-                      {problem.tags && problem.tags.length > 0 ? (
-                        problem.tags.map((tag, idx) => (
-                          <span
-                            key={idx}
-                            className="inline-block bg-gray-200 text-gray-800 text-xs px-2 py-1 rounded-full"
-                          >
-                            {tag}
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-gray-400 italic text-sm">—</span>
-                      )}
-                    </td>
-
-                    <td className="px-4 py-3">
-                      {isSubmitted && (
-                        <span className="text-green-600 font-semibold">
-                          ✅ Submitted
+                        >
+                          {problem.difficulty}
                         </span>
-                      )}
-                    </td>
-                  </tr>
+                      </h1>
+                      <p>{problem.description}</p>
+
+                      <p className="p-3 text-left flex flex-wrap gap-2">
+                        {problem.tags && problem.tags.length > 0 ? (
+                          problem.tags.map((tag, idx) => (
+                            <span
+                              key={idx}
+                              className="inline-block bg-gray-200 text-gray-800 text-xs px-2 py-1 rounded-full"
+                            >
+                              {tag}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-gray-400 italic text-sm p-0"></span>
+                        )}
+                      </p>
+
+                      <p className="flex flex-row justify-between bg-pink-950 text-white p-2 rounded-sm">
+                        <h1>Submission Status : </h1>
+                        {isSubmitted ? (
+                          <span className="text-white  font-bold">
+                            ✅ Submitted
+                          </span>
+                        ) : (
+                          <span>❌ Not Submitted</span>
+                        )}
+                      </p>
+                    </div>
+                  </Link>
                 );
               })}
-            </tbody>
-          </table>
-        </div>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* problem tables */}
+            <div className="bg-black text-white overflow-x-auto p-2 md:text-2xl">
+              <table className="w-full border rounded-lg overflow-hidden">
+                <thead className=" uppercase text-sm">
+                  <tr>
+                    <th className="px-4 py-3">Title</th>
+                    <th className="px-4 py-3">Difficulty</th>
+                    <th className="px-4 py-3">Tags</th>
+                    <th className="px-4 py-3">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {problems.map((problem) => {
+                    const isSubmitted = submittedIds.includes(problem._id);
+                    return (
+                      <tr
+                        key={problem._id}
+                        className={`border-t  ${
+                          isSubmitted
+                            ? "bg-green-600 text-white"
+                            : "bg-slate-900"
+                        }`}
+                      >
+                        <td className="px-4 py-3">
+                          <Link
+                            to={`/problems/${problem._id}`}
+                            className="text-white font-bold hover:underline"
+                          >
+                            {problem.title}
+                          </Link>
+                        </td>
+
+                        <td className="px-4 py-3">
+                          <span
+                            className={`px-2 py-1 rounded text-sm font-medium
+                          ${
+                            problem.difficulty === "Easy"
+                              ? "bg-green-400 text-white"
+                              : problem.difficulty === "Medium"
+                              ? "bg-yellow-800 text-white"
+                              : "bg-red-800 text-white"
+                          }
+                        `}
+                          >
+                            {problem.difficulty}
+                          </span>
+                        </td>
+
+                        <td className="px-4 py-3 space-x-2">
+                          {problem.tags && problem.tags.length > 0 ? (
+                            problem.tags.map((tag, idx) => (
+                              <span
+                                key={idx}
+                                className="inline-block bg-gray-200 text-gray-800 text-xs px-2 py-1 rounded-full"
+                              >
+                                {tag}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-gray-400 italic text-sm">
+                              —
+                            </span>
+                          )}
+                        </td>
+
+                        <td className="px-4 py-3">
+                          {isSubmitted ? (
+                            <span className="text-white font-semibold">
+                              ✅ Submitted
+                            </span>
+                          ) : (
+                            <span>
+                              <span>❌ Not Submitted</span>
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
       </SignedIn>
     </div>
   );
