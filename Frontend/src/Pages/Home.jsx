@@ -44,7 +44,7 @@ const Home = () => {
   }, [isSignedIn]);
 
   return (
-    <div className=" min-h-screen flex flex-col align-middle justify-start bg-gradient-to-r from-slate-700 via-gray-800 to-slate-950 text-white">
+    <div className=" min-h-[97vh] pt-8 flex flex-col align-middle justify-start bg-gradient-to-r from-slate-700 via-gray-800 to-slate-950 text-white">
       <SignedOut>
         <video
           autoPlay
@@ -99,11 +99,11 @@ const Home = () => {
                       key={problem._id}
                       className="bg-slate-500 font-bold border-gray-600 border-2 rounded-xl flex md:flex-wrap flex-col text-white w-[90vw] md:w-[500px] justify-between p-2.5 hover:bg-gradient-to-r from-slate-800 to-slate-600 min-h-44"
                     >
-                      <h1 className="flex flex-row justify-between text-2xl">
+                      <h1 className="flex flex-row justify-between text-2xl text-left">
                         {problem.title}
 
                         <span
-                          className={`px-2 py-1 rounded text-sm font-medium
+                          className={`px-2 py-1 rounded text-[16px] font-medium flex align-middle my-auto justify-center
                           ${
                             problem.difficulty === "Easy"
                               ? "bg-green-100 text-green-800"

@@ -135,11 +135,11 @@ const Problem = () => {
   if (!problem) return <p className="p-6">Problem not found.</p>;
 
   return (
-    <div className="flex flex-col bg-slate-950 text-white pt-20 md:flex-row gap-6 p-6 max-w-[100%] mx-auto min-h-[80vh]">
+    <div className="min-h-[97vh] flex flex-col bg-slate-950 text-white pt-28 lg:flex-row gap-6 p-6 max-w-[100%] mx-auto ">
       {/* ───── Left: Problem details ───── */}
-      <div className="md:w-1/3">
+      <div className="w-full text-left lg:w-1/3 mx-auto">
         <h1 className="text-3xl font-bold mb-2">{problem.title}</h1>
-        <p className="text-sm text-white mb-4  ">
+        <p className="text-sm text-white mb-4 pb-2.5  border-b">
           Difficulty:&nbsp;
           <span
             className={
@@ -158,7 +158,9 @@ const Problem = () => {
         <p className="whitespace-pre-wrap">{problem.description}</p>
 
         <h2 className="text-xl font-semibold mt-6 mb-1">Constraints</h2>
-        <p className="whitespace-pre-wrap">{problem.constraints}</p>
+        <p className="whitespace-pre-wrap border-b pb-2.5">
+          {problem.constraints}
+        </p>
 
         <h2 className="text-xl font-semibold mt-6 mb-2">Sample Test Cases</h2>
         {problem.sampleTestcases.map((t, i) => (
@@ -184,7 +186,7 @@ const Problem = () => {
       </div>
 
       {/* ───── Right: Editor & Submit ───── */}
-      <div className="md:w-2/3">
+      <div className="w-full lg:w-2/3 mx-auto">
         {/* Language selector */}
         <div className="mb-3">
           <label className="block mb-1 font-medium">Language:</label>

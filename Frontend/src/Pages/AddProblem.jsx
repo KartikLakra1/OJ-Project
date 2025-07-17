@@ -64,8 +64,8 @@ const AddProblem = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 pt-24 bg-gradient-to-b from-slate-700 to-slate-950 text-white">
-      <h1 className="text-3xl font-bold mb-6">Add New Problem</h1>
+    <div className="min-h-[97vh] pt-20 flex justify-center align-middle flex-col p-11 bg-gradient-to-b from-slate-700 to-slate-950 text-white">
+      <h1 className="text-2xl  md:text-4xl font-bold mb-8">Add New Problem</h1>
       <form onSubmit={handleSubmit} className="space-y-4 text-white">
         {/* Title */}
         <input

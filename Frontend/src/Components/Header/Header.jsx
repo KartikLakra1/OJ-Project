@@ -18,10 +18,10 @@ const Header = () => {
   // console.log("isadmin : ", isAdmin);
 
   return (
-    <header className="fixed w-[100%] z-100 flex items-center justify-between px-6 py-4 shadow-md bg-gradient-to-r from-slate-800 to-slate-950 ">
+    <header className="fixed w-full z-100 flex items-center justify-between px-1 md:px-4 py-4 shadow-md bg-gradient-to-r from-slate-800 to-slate-950 mx-auto">
       <Link
         to="/"
-        className="text-2xl font-bold text-indigo-100 hover:text-indigo-200 transition"
+        className="text-md text-left flex align-middle justify-center md:text-2xl font-bold text-indigo-100 hover:text-indigo-200 transition"
       >
         ⚡CODE GUNIE
       </Link>
@@ -31,7 +31,7 @@ const Header = () => {
           {isSignedIn && role === "admin" && (
             <Link
               to="/add-problem"
-              className="text-sm px-4 py-2 text-white rounded font-bold hover:underline "
+              className="text-sm px-4 py-2 text-white rounded font-bold cursor-pointer "
             >
               Add Problem
             </Link>
