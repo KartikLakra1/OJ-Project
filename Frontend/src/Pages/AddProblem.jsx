@@ -64,9 +64,9 @@ const AddProblem = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Add New Problem</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="max-w-4xl mx-auto p-6 pt-24 bg-gradient-to-b from-slate-700 to-slate-950 text-white">
+      <h1 className="text-3xl font-bold mb-6">Add New Problem</h1>
+      <form onSubmit={handleSubmit} className="space-y-4 text-white">
         {/* Title */}
         <input
           type="text"
@@ -74,7 +74,7 @@ const AddProblem = () => {
           placeholder="Title"
           value={form.title}
           onChange={handleChange}
-          className="w-full border p-2 rounded"
+          className="w-full border p-2 rounded text-white bg-black"
           required
         />
 
@@ -84,7 +84,7 @@ const AddProblem = () => {
           placeholder="Description"
           value={form.description}
           onChange={handleChange}
-          className="w-full border p-2 rounded"
+          className="w-full border p-2 rounded bg-black"
           rows={5}
           required
         />
@@ -95,7 +95,7 @@ const AddProblem = () => {
           placeholder="Constraints"
           value={form.constraints}
           onChange={handleChange}
-          className="w-full border p-2 rounded"
+          className="w-full border p-2 rounded bg-black"
           rows={3}
         />
 
@@ -104,7 +104,7 @@ const AddProblem = () => {
           name="difficulty"
           value={form.difficulty}
           onChange={handleChange}
-          className="w-full border p-2 rounded"
+          className="w-full border p-2 rounded bg-black"
         >
           <option>Easy</option>
           <option>Medium</option>
@@ -122,16 +122,16 @@ const AddProblem = () => {
               tags: e.target.value.split(",").map((tag) => tag.trim()),
             })
           }
-          className="w-full border p-2 rounded"
+          className="w-full border p-2 rounded bg-black"
         />
 
         {/* Sample Test Cases */}
         <div>
-          <h2 className="font-medium mt-6 mb-2">Sample Test Cases</h2>
+          <h2 className="text-2xl font-bold mt-6 mb-2">Sample Test Cases</h2>
           {form.sampleTestcases.map((tc, idx) => (
             <div
               key={idx}
-              className="border p-3 rounded space-y-2 bg-gray-50 mb-3"
+              className="border-slate-200 p-3 rounded space-y-2 mb-3"
             >
               <textarea
                 placeholder="Sample Input"
@@ -144,7 +144,7 @@ const AddProblem = () => {
                     e.target.value
                   )
                 }
-                className="w-full border p-2 rounded"
+                className="w-full border p-2 rounded bg-black"
                 rows={2}
                 required
               />
@@ -159,7 +159,7 @@ const AddProblem = () => {
                     e.target.value
                   )
                 }
-                className="w-full border p-2 rounded"
+                className="w-full border p-2 rounded bg-black"
                 rows={2}
                 required
               />
@@ -168,7 +168,7 @@ const AddProblem = () => {
           <button
             type="button"
             onClick={() => addTestcase("sampleTestcases")}
-            className="text-sm text-indigo-600 hover:underline"
+            className="text-sm text-yellow-100 cursor-pointer"
           >
             + Add Sample Test Case
           </button>
@@ -176,11 +176,11 @@ const AddProblem = () => {
 
         {/* Hidden Test Cases */}
         <div>
-          <h2 className="font-medium mt-6 mb-2">Hidden Test Cases</h2>
+          <h2 className="text-2xl font-bold mt-6 mb-2">Hidden Test Cases</h2>
           {form.hiddenTestcases.map((tc, idx) => (
             <div
               key={idx}
-              className="border p-3 rounded space-y-2 bg-gray-100 mb-3"
+              className="border-slate-100 p-3 rounded space-y-2  mb-3"
             >
               <textarea
                 placeholder="Hidden Input"
@@ -193,7 +193,7 @@ const AddProblem = () => {
                     e.target.value
                   )
                 }
-                className="w-full border p-2 rounded"
+                className="w-full border p-2 rounded bg-black"
                 rows={2}
                 required
               />
@@ -208,7 +208,7 @@ const AddProblem = () => {
                     e.target.value
                   )
                 }
-                className="w-full border p-2 rounded"
+                className="w-full border p-2 rounded bg-black"
                 rows={2}
                 required
               />
@@ -217,7 +217,7 @@ const AddProblem = () => {
           <button
             type="button"
             onClick={() => addTestcase("hiddenTestcases")}
-            className="text-sm text-indigo-600 hover:underline"
+            className="text-sm text-yellow-100 cursor-pointer"
           >
             + Add Hidden Test Case
           </button>
