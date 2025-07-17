@@ -97,7 +97,7 @@ const Home = () => {
                   <Link to={`/problems/${problem._id}`}>
                     <div
                       key={problem._id}
-                      className="bg-slate-500 font-bold border-gray-600 border-2 rounded-xl flex md:flex-wrap flex-col text-white w-[90vw] md:w-[500px] justify-center p-2.5 hover:bg-gradient-to-r from-slate-800 to-slate-600 min-h-28"
+                      className="bg-slate-500 font-bold border-gray-600 border-2 rounded-xl flex md:flex-wrap flex-col text-white w-[90vw] md:w-[500px] justify-between p-2.5 hover:bg-gradient-to-r from-slate-800 to-slate-600 min-h-44"
                     >
                       <h1 className="flex flex-row justify-between text-2xl">
                         {problem.title}
