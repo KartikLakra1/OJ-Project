@@ -19,7 +19,7 @@ const Footer = () => {
   return (
     <footer className="w-full border-t py-6 px-4 text-center text-lg bg-gradient-to-r from-gray-950 to-gray-800 text-white">
       <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
-        <p>© {new Date().getFullYear()} Code Gunie. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} GENIE World All rights reserved.</p>
         <div className="flex gap-4">
           <a
             href="https://github.com/KartikLakra1"
