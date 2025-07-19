@@ -136,7 +136,11 @@ const Home = () => {
                         )}
                       </p>
 
-                      <p className="flex flex-row justify-between bg-pink-950 text-white p-2 rounded-sm">
+                      <p
+                        className={`flex flex-row justify-between text-white p-2 rounded-sm ${
+                          isSubmitted ? "bg-green-950" : "bg-pink-950"
+                        }`}
+                      >
                         <h1>Submission Status : </h1>
                         {isSubmitted ? (
                           <span className="text-white  font-bold">
