@@ -52,7 +52,7 @@ const AddProblem = () => {
         tags: form.tags.filter((tag) => tag.trim() !== ""), // remove empty tags
       };
 
-      await api.post("/problems/add", payload);
+      await api.post(`/problems/add`, payload);
       toast.success("✅ Problem added successfully");
       navigate("/");
     } catch (err) {
