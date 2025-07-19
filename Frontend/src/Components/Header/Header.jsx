@@ -23,7 +23,7 @@ const Header = () => {
         to="/"
         className="text-md text-left flex align-middle justify-center md:text-2xl font-bold text-indigo-100 hover:text-indigo-200 transition"
       >
-        ⚡CODE GUNIE
+        ⚡CODE GUINEA
       </Link>
 
       <nav className="flex items-center gap-4">
