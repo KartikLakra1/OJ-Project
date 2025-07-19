@@ -29,17 +29,19 @@ const Header = () => {
       <nav className="flex items-center gap-4">
         <div className="flex gap-4 items-center">
           {isSignedIn && role === "admin" && (
-            <Link
-              to="/add-problem"
-              className="text-sm px-4 py-2 text-white rounded font-bold cursor-pointer "
-            >
-              Add Problem
-            </Link>
+            <>
+              <Link
+                to="/add-problem"
+                className="text-sm px-4 py-2 text-white rounded font-bold cursor-pointer "
+              >
+                Add Problem
+              </Link>
+            </>
           )}
         </div>
 
-        <Link to="/" className="text-white font-medium">
-          Home
+        <Link to="/compiler" className="text-white font-medium">
+          Compiler
         </Link>
 
         <SignedIn>
