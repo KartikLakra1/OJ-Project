@@ -6,6 +6,7 @@ import Home from "./Pages/Home.jsx";
 import ProblemPage from "./Pages/ProblemPage.jsx";
 import Footer from "./Components/Footer/Footer.jsx";
 import AddProblem from "./Pages/AddProblem.jsx";
+import Compiler from "./Pages/Compiler.jsx";
 
 function App() {
   // console.log("BACKEND:", import.meta.env.VITE_BACKEND_URL);
@@ -18,6 +19,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/problems/:id" element={<ProblemPage />} />
         <Route path="/add-problem" element={<AddProblem />} />
+        <Route path="/compiler" element={<Compiler />} />
       </Routes>
       <Footer />
     </>
