@@ -26,7 +26,7 @@ const useSyncUser = () => {
 
 // console.log("🛰️ Payload sent to backend:", payload);
         const isuserPresent = await axios.post(
-          "http://localhost:5000/api/auth/sync",
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/auth/sync`,
           payload,
           {
             headers: {
@@ -35,7 +35,7 @@ const useSyncUser = () => {
           }
         );
 
-        console.log(isuserPresent?.data?.message);
+        // console.log(isuserPresent?.data?.message);
 
         console.log("✅ User synced to backend");
       } catch (err) {

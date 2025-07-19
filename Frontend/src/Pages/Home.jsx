@@ -23,8 +23,8 @@ const Home = () => {
     const fetchProblems = async () => {
       try {
         const token = await getToken();
-        console.log("token : ", token);
-        console.log("env : ", import.meta.env.VITE_BACKEND_URL);
+        // console.log("token : ", token);
+        // console.log("env : ", import.meta.env.VITE_BACKEND_URL);
         const res = await axios.get(
           `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/problems`,
           {
@@ -36,7 +36,7 @@ const Home = () => {
 
         setProblems(res.data.problems || []);
         setSubmittedIds(res.data.submittedProblemIds || []);
-        console.log("problems : ", problems);
+        // console.log("problems : ", problems);
         console.log("problems fetched successfully");
       } catch (err) {
         console.error("❌ Failed to fetch problems:", err);

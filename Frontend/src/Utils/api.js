@@ -6,8 +6,7 @@ const useApi = () => {
   const { getToken } = useAuth();
 
   const instance = axios.create({
-    baseURL: "http://localhost:5000/api",
-    baseUrl: `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api`
+    baseURL: `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api`
   });
 
   instance.interceptors.request.use(async (config) => {
