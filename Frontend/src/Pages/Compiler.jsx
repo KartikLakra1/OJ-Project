@@ -56,10 +56,10 @@ const Compiler = () => {
   };
 
   return (
-    <div className="pt-48 min-h-[94vh] bg-[#0f172a] text-white p-6 md:p-8 flex flex-col md:flex-row gap-6 ">
+    <div className="pt-16 p-2.5 pb-3.5 md:pt-24 min-h-[94vh] bg-[#0f172a] text-white md:p-8 flex flex-col md:flex-row gap-6 ">
       {/* Left: Editor and Language Selector */}
-      <div className="md:w-2/3 md:mt-24 md:flex md:flex-col text-left md:gap-7">
-        <h1 className="text-3xl font-bold">Compiler Your Code</h1>
+      <div className="md:w-2/3 md:mt-0 md:flex md:flex-col text-left md:gap-7 ">
+        <h1 className="text-3xl font-bold pb-4 md:pb-0">Compiler Your Code</h1>
 
         <div className="mb-2">
           <label className="font-medium mr-2">Language:</label>
